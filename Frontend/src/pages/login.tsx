@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
 import '../app/globals.css';
 import axios from 'axios';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 const Login = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const router = useRouter();
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    try {
-      const res = await axios.post('http://localhost:4000/api/v1/auth/signin', {
-        email: 'selimsahin.sns@gmail.com',
-        password: 'password',
-      });
+    const result = await signIn("credentials", {
+      redirect: false,
+      email: email,
+      password: password,
+    });
 
-      console.log(res);
-    } catch (error: any) {
-      console.log(error.message);
+    if (!result?.error) {
+      await router.push(`/`);
+    } else {
+      console.log(result.error);
     }
   };
 
