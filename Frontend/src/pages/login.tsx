@@ -1,29 +1,45 @@
-import React, { useState } from 'react';
-import '../app/globals.css';
-import axios from 'axios';
-import { signIn } from 'next-auth/react';
+import React, { useEffect, useState } from 'react';
+import { login } from '@/utils/auth';
 import { useRouter } from 'next/router';
+import axios from 'axios';
+import '@/app/globals.css';
+import { useAuth } from '@/context/auth';
+import { usePathname } from 'next/navigation';
 
 const Login = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const path = usePathname();
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
+    const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      email: email,
-      password: password,
-    });
+    try {
+      const response = await axios.post(
+        '/api/v1/auth/signin',
+        { email, password },
+        { baseURL }
+      );
 
-    if (!result?.error) {
-      await router.push(`/`);
-    } else {
-      console.log(result.error);
+      if (response.status === 200) {
+        const jwt: string = response.data.jwt;
+        login(jwt);
+      } else {
+        console.error('Login failed.');
+      }
+    } catch (error: any) {
+      console.error(error.message);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated]);
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
