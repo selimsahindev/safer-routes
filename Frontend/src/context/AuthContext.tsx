@@ -1,9 +1,10 @@
 import React, { createContext, useEffect, useState } from 'react';
-import cookie from 'cookie';
+import { useRouter } from 'next/router';
+import { getToken, setToken, removeToken } from '@/utils/AuthUtils';
 
 interface AuthContextProps {
   isAuthenticated: boolean;
-  login: () => void;
+  login: (token: string) => void;
   logout: () => void;
 }
 
@@ -18,26 +19,23 @@ interface Props {
 }
 
 const checkIsAuthenticated = () => {
-  const token = cookie.parse(document.cookie).token;
-
-  // TODO: check if token is valid
-
-  if (token) {
-    return true;
-  } else {
-    return false;
-  }
+  const token = getToken();
+  return !!token;
 };
 
 export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
-  const login = () => {
+  const login = (token: string) => {
+    setToken(token);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
+    removeToken();
     setIsAuthenticated(false);
+    router.push('/login');
   };
 
   useEffect(() => {
