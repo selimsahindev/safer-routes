@@ -1,6 +1,17 @@
 import { Request, Response } from 'express';
 import supabase from '../config/supabaseClient';
 
+type User = {
+  id: 1,
+  email: 'johndoe@example.com',
+  username: 'johndoe',
+  name: 'John Doe',
+  roles: ['user'],
+  metadata: {
+    preferredLanguage: 'en',
+  }
+}
+
 exports.signUp = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -22,12 +33,22 @@ exports.signIn = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const result = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
-    return res.status(200).json({ token: result.data.session?.access_token });
+    if (error) {
+      return res.status(401).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
+
+    return res.status(200).json({
+      user: data.user,
+      token: data.session?.access_token
+    });
 
   } catch (error: any) {
     return res.status(401).json({
