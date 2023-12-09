@@ -21,7 +21,6 @@ const Login = () => {
       );
 
       if (response.status === 200) {
-        console.log('Login successful.', response.data.token);
         const jwt: string = response.data.token;
         login(jwt);
         router.push('/');

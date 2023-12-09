@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/app';
 import { useEffect } from 'react';
 import { AuthProvider } from '@/context/AuthContext';
-import '@/pages/globals.css';
+import '@/styles/globals.css';
 
 function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
