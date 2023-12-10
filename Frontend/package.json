@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.19.2",
     "axios": "^1.6.2",
     "cookie": "^0.6.0",
     "lucide-react": "^0.294.0",

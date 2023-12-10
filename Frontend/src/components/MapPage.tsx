@@ -1,23 +1,52 @@
 import { LocateFixed, ScanSearch } from 'lucide-react';
 import LocationSearchInput from './LocationSearchInput';
 import useFocusStore from '@/stores/focusStore';
+import Directions from './Directions';
+import { useEffect, useRef, useState } from 'react';
+
+interface MapProps {
+  setMapRef: React.Dispatch<React.SetStateAction<google.maps.Map | null>>;
+}
 
 const MapPage: React.FC = () => {
+  const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
+
   return (
-    <div className="flex flex-col h-screen bg-white">
-      <Map />
+    <div className="flex flex-col h-screen bg-white md:px-[15%]">
+      <Map setMapRef={setMapRef} />
+      <Directions
+        map={mapRef}
+        origin="Kadıköy, İstanbul"
+        destination="Ortaköy, İstanbul"
+      />
       <SearchBar />
     </div>
   );
 };
 
-const Map: React.FC = () => {
+const Map: React.FC<MapProps> = ({ setMapRef }) => {
+  const mapRef = useRef<google.maps.Map | null>(null);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      setMapRef(mapRef.current);
+    }
+  }, [setMapRef]);
+
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
   const googleUrl = `https://www.google.com/maps/embed/v1/place?q=place_id:ChIJawhoAASnyhQR0LABvJj-zOE&key=${apiKey}`;
 
   return (
     <iframe
-      className="w-screen h-screen scale-95 -mb-5 rounded-t-3xl rounded-b-md shadow-sm"
+      ref={(iframe) => {
+        // Set the map reference when the iframe (map) is loaded
+        if (iframe && iframe.contentDocument) {
+          mapRef.current = new google.maps.Map(iframe.contentDocument.body, {
+            // Add your map options here if needed
+          });
+        }
+      }}
+      className="w-full h-screen scale-95 -mb-5 rounded-t-3xl rounded-b-md md:rounded-b-3xl shadow-sm"
       loading="lazy"
       src={googleUrl}
     ></iframe>
@@ -31,9 +60,9 @@ const SearchBar: React.FC = () => {
   const isFocused = useFocusStore((state: any) => state.isFocused);
 
   return (
-    <div className="text-black bg-white">
+    <div className="text-black w-full md:mx-auto">
       <form>
-        <div className="grid gap-1 px-2 md:px-[15%] my-4">
+        <div className="grid gap-1 px-2 my-4">
           <LocationSearchInput
             placeholder="Mevcut Konum"
             inputStyle={`${inputStyle} pr-10`}
