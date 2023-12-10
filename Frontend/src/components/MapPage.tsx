@@ -1,4 +1,5 @@
-import { ScanSearch } from 'lucide-react';
+import { LocateFixed, ScanSearch } from 'lucide-react';
+import LocationSearchInput from './LocationSearchInput';
 
 const MapPage: React.FC = () => {
   return (
@@ -24,14 +25,25 @@ const Map: React.FC = () => {
 
 const SearchBar: React.FC = () => {
   const inputStyle =
-    'border border-gray-30 text-sm w-full rounded-xl px-4 py-2 shadow-sm';
+    'border border-gray-30 text-sm w-full rounded-xl px-4 py-2 shadow-sm text-gray-500';
 
   return (
     <div className="text-black bg-white">
       <form>
         <div className="grid md:grid-cols-2 gap-1 px-2 md:px-[15%] my-4">
-          <input className={inputStyle} type="text" placeholder="Başlangıç" />
-          <input className={inputStyle} type="text" placeholder="Hedef" />
+          <LocationSearchInput
+            placeholder="Mevcut Konum"
+            inputStyle={`${inputStyle} pr-10`}
+          >
+            <button>
+              <LocateFixed className="text-blue-500 my-auto -ml-8" />
+            </button>
+          </LocationSearchInput>
+
+          <LocationSearchInput
+            placeholder="Hedef Konum"
+            inputStyle={inputStyle}
+          />
 
           <button
             type="submit"
@@ -40,7 +52,7 @@ const SearchBar: React.FC = () => {
           >
             <div className="flex flex-row justify-center gap-2">
               <p className="font-normal">Rota Bul</p>
-              <ScanSearch />
+              <ScanSearch className="w-5" />
             </div>
           </button>
         </div>
