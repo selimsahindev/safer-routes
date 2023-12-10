@@ -1,8 +1,10 @@
-import React, { ChangeEvent } from 'react';
+import { Loader2, MapPin } from 'lucide-react';
+import React from 'react';
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from 'react-places-autocomplete';
+import useFocusStore from '@/stores/focusStore';
 
 interface LocationSearchInputState {
   address: string;
@@ -12,6 +14,7 @@ interface LocationSearchInputProps {
   children?: React.ReactNode;
   placeholder?: string;
   inputStyle?: string;
+  inputId?: string;
 }
 
 class LocationSearchInput extends React.Component<
@@ -44,26 +47,38 @@ class LocationSearchInput extends React.Component<
         {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
           <div>
             <div className="autocomplete-dropdown-container">
-              {loading && <div>Loading...</div>}
-              {suggestions.map((suggestion) => {
-                const className = suggestion.active
-                  ? 'suggestion-item--active'
-                  : 'suggestion-item';
-                // inline style for demonstration purpose
-                const style = suggestion.active
-                  ? { backgroundColor: '#fafafa', cursor: 'pointer' }
-                  : { backgroundColor: '#ffffff', cursor: 'pointer' };
-                return (
-                  <div
-                    {...getSuggestionItemProps(suggestion, {
-                      className,
-                      style,
-                    })}
-                  >
-                    <span>{suggestion.description}</span>
-                  </div>
-                );
-              })}
+              {suggestions
+                .slice()
+                .reverse()
+                .map((suggestion) => {
+                  const className = suggestion.active
+                    ? 'suggestion-item--active'
+                    : 'suggestion-item';
+
+                  const style = suggestion.active
+                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+
+                  return (
+                    <div
+                      {...getSuggestionItemProps(suggestion, {
+                        className,
+                        style,
+                      })}
+                    >
+                      <div className="border-b border-gray-200"></div>
+
+                      <div className="flex flex-row gap-2 w-full">
+                        <div className="text-green-500 my-auto pl-1">
+                          <MapPin size={20} strokeWidth={2.5} />
+                        </div>
+                        <div className="text-sm text-gray-500 py-2">
+                          {suggestion.description}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
 
             <div className="flex flex-row">
@@ -71,9 +86,23 @@ class LocationSearchInput extends React.Component<
                 {...getInputProps({
                   placeholder: this.props.placeholder || 'Search Places ...',
                   className: `location-search-input ${this.props.inputStyle}`,
+                  onFocus: () =>
+                    useFocusStore.setState({
+                      isFocused: this.props.inputId === 'current-location',
+                    }),
+                  onBlur: () => useFocusStore.setState({ isFocused: false }),
+                  id: this.props.inputId,
                 })}
               />
-              {this.props.children}
+              {loading ? (
+                <Loader2
+                  className="text-teal-400 my-auto -ml-8 animate-spin"
+                  strokeWidth={3}
+                  size={20}
+                />
+              ) : (
+                this.props.children
+              )}
             </div>
           </div>
         )}
