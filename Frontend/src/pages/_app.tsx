@@ -13,6 +13,8 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <script
+        async
+        defer
         src={`https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`}
       ></script>
       <AuthProvider>

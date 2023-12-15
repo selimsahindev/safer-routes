@@ -34,7 +34,7 @@ const Map: React.FC<MapProps> = ({ setMapRef }) => {
   }, [setMapRef]);
 
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-  const googleUrl = `https://www.google.com/maps/embed/v1/place?q=place_id:ChIJawhoAASnyhQR0LABvJj-zOE&key=${apiKey}`;
+  const googleUrl = `https://www.google.com/maps/embed/v1/directions?key=${apiKey}&origin=Oslo+Norway&destination=Telemark+Norway&avoid=tolls|highways`;
 
   return (
     <iframe
