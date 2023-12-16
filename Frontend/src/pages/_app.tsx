@@ -8,10 +8,18 @@ function App({ Component, pageProps }: AppProps) {
     document.title = 'Safer Routes | Login';
   }, []);
 
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+
   return (
-    <AuthProvider>
-      <Component {...pageProps} />
-    </AuthProvider>
+    <>
+      <script
+        src={`https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry`}
+      />
+
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
+    </>
   );
 }
 
