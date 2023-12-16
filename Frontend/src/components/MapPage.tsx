@@ -2,6 +2,7 @@ import { useState } from 'react';
 const { compose, withProps, lifecycle } = require('recompose');
 import { DirectionsRenderer } from 'react-google-maps';
 import SearchBar from '@/components/SearchBar';
+import Header from '@/components/Header';
 const { withScriptjs, withGoogleMap, GoogleMap } = require('react-google-maps');
 import routeCoordinates from '@/data/routeCoordinates';
 
@@ -13,6 +14,7 @@ const MapPage: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-white md:px-[15%]">
+      <Header />
       <MapWithDirectionsRenderer />
       <SearchBar />
     </div>
@@ -25,11 +27,7 @@ const MapWithDirectionsRenderer = compose(
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div className={'h-full w-full'} />,
     mapElement: (
-      <div
-        className={
-          'w-full h-full scale-95 -mb-5 rounded-t-3xl rounded-b-md md:rounded-b-3xl shadow-sm'
-        }
-      />
+      <div className={'w-full h-full rounded-b-md md:rounded-b-xl shadow-sm'} />
     ),
   }),
   withScriptjs,
