@@ -59,7 +59,11 @@ const MapPage: React.FC = () => {
 const MapWithDirectionsRenderer = compose(
   withProps({
     googleMapURL: googleUrl,
-    loadingElement: <div className={'h-full'} />,
+    loadingElement: (
+      <div className={'h-full flex items-center justify-center'}>
+        Loading...
+      </div>
+    ),
     containerElement: <div className={'h-full w-full'} />,
     mapElement: (
       <div className={'w-full h-full rounded-b-md md:rounded-b-xl shadow-sm'} />
