@@ -8,13 +8,7 @@ interface AuthContextProps {
   logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextProps>({
-  isAuthenticated: false,
-  login: () => {},
-  logout: () => {},
-});
-
-interface Props {
+interface AuthProviderProps {
   children: React.ReactNode;
 }
 
@@ -23,7 +17,11 @@ const checkIsAuthenticated = () => {
   return !!token;
 };
 
-export const AuthProvider: React.FC<Props> = ({ children }) => {
+export const AuthContext = createContext<AuthContextProps>(
+  {} as AuthContextProps
+);
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
@@ -50,6 +48,4 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   );
 };
 
-const useAuth = () => React.useContext(AuthContext);
-
-export { useAuth };
+export const useAuth = () => React.useContext(AuthContext);

@@ -15,6 +15,7 @@ interface LocationSearchInputProps {
   placeholder?: string;
   inputStyle?: string;
   inputId?: string;
+  setLocation?: (latLng: any) => void;
 }
 
 class LocationSearchInput extends React.Component<
@@ -32,9 +33,14 @@ class LocationSearchInput extends React.Component<
 
   handleSelect = (address: string) => {
     this.setState({ address });
+
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
-      .then((latLng) => console.log('Success', latLng))
+      .then((latLng) => {
+        if (this.props.setLocation) {
+          this.props.setLocation(latLng);
+        }
+      })
       .catch((error) => console.error('Error', error));
   };
 
@@ -51,7 +57,7 @@ class LocationSearchInput extends React.Component<
               {suggestions
                 .slice()
                 .reverse()
-                .map((suggestion) => {
+                .map((suggestion, index) => {
                   const className = suggestion.active
                     ? 'suggestion-item--active'
                     : 'suggestion-item';
@@ -65,6 +71,7 @@ class LocationSearchInput extends React.Component<
                       {...getSuggestionItemProps(suggestion, {
                         className,
                         style,
+                        key: index,
                       })}
                     >
                       <div className="border-b border-gray-200"></div>
