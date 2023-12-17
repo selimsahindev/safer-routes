@@ -1,9 +1,10 @@
-from fastapi import APIRouter 
+from fastapi import APIRouter
 import pandas as pd
 import networkx as nx
 import os
 import osmnx as ox
 from geopy.distance import geodesic
+import zipfile
 
 router = APIRouter(
     prefix="/api/v1/map",
@@ -12,6 +13,13 @@ router = APIRouter(
 
 # Use the __file__ attribute to get the path of the current script
 current_script_path = os.path.dirname(os.path.realpath(__file__))
+
+# Unzip edges.zip
+zip_file_path = os.path.join(current_script_path, 'data', 'edges.zip')
+unzip_dir = os.path.join(current_script_path, 'data')
+with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+    zip_ref.extractall(unzip_dir)
+
 
 nodes_df = pd.read_csv(os.path.join(current_script_path, 'data', 'nodes.csv'))
 edges_df = pd.read_csv(os.path.join(current_script_path, 'data', 'edges.csv'))
@@ -81,12 +89,14 @@ async def get_route(
     shortest_path_nodes = nx.shortest_path(G, source=start_node, target=end_node,
                                    method='dijkstra', weight='weight')
 
+
     path_coordinates = []
     response = []
 
     for node in shortest_path_nodes:
         coordinate = Coordinate(G.nodes[node]['y'], G.nodes[node]['x'])
         path_coordinates.append(coordinate)
+
 
     if len(path_coordinates) > 27:
         response.append(path_coordinates[0])
@@ -97,4 +107,7 @@ async def get_route(
                 response.append(path_coordinates[i])
 
         response.append(path_coordinates[length-1])
-    return { "route": response }
+    else:
+        response = path_coordinates
+
+    return {"route": response}
