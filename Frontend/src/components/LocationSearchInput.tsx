@@ -37,7 +37,6 @@ class LocationSearchInput extends React.Component<
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then((latLng) => {
-        console.log('Success', latLng);
         if (this.props.setLocation) {
           this.props.setLocation(latLng);
         }
@@ -58,7 +57,7 @@ class LocationSearchInput extends React.Component<
               {suggestions
                 .slice()
                 .reverse()
-                .map((suggestion) => {
+                .map((suggestion, index) => {
                   const className = suggestion.active
                     ? 'suggestion-item--active'
                     : 'suggestion-item';
@@ -72,6 +71,7 @@ class LocationSearchInput extends React.Component<
                       {...getSuggestionItemProps(suggestion, {
                         className,
                         style,
+                        key: index,
                       })}
                     >
                       <div className="border-b border-gray-200"></div>

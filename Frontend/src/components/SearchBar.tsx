@@ -1,10 +1,10 @@
 import { LocateFixed, ScanSearch } from 'lucide-react';
 import LocationSearchInput from './LocationSearchInput';
 import useFocusStore from '@/stores/focusStore';
-import DirectionsService from '@/services/DirectionsService';
-import { useState } from 'react';
+import RoutesService from '@/services/RouteService';
+import { useEffect, useState } from 'react';
 import LocationType from '@/types/LocationType';
-import { on } from 'events';
+import { useMapRoute } from '@/context/MapRouteContext';
 
 interface SearchBarProps {
   onLocateClick: (e: any) => void;
@@ -12,7 +12,8 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ onLocateClick }) => {
   const [origin, setOrigin] = useState<LocationType | null>(null);
-  const [destionation, setDestination] = useState<LocationType | null>(null);
+  const [destination, setDestination] = useState<LocationType | null>(null);
+  const { setRouteData } = useMapRoute();
 
   const inputStyle =
     'border border-gray-30 text-sm w-full rounded-xl px-4 py-2 shadow-sm text-gray-500 focus:outline-teal-400';
@@ -22,17 +23,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onLocateClick }) => {
   const handleFindRoutes = async (e: any) => {
     e.preventDefault();
 
-    console.log('origin:', origin);
-    console.log('destination:', destionation);
-
-    if (!origin || !destionation) {
+    if (!origin || !destination) {
       console.log('Origin or destination is null.');
       return;
     }
 
     try {
-      const routes = await DirectionsService.getRoutes(origin, destionation);
-      // Do something with the routes, e.g., update state or perform further actions.
+      const routes = await RoutesService.getWaypoints(origin, destination);
+      setRouteData(origin, destination);
+      // TODO: Do something with the routes, e.g., update state or perform further actions.
       console.log('Routes:', routes);
     } catch (error) {
       console.error('Error fetching routes:', error);
