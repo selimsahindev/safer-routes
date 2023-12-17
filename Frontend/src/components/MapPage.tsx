@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { DirectionsRenderer, Marker } from 'react-google-maps';
 import SearchBar from '@/components/SearchBar';
 import Header from '@/components/Header';
 import { useMapRoute } from '@/context/MapRouteContext';
+import { Loader2 } from 'lucide-react';
 const { compose, withProps, lifecycle } = require('recompose');
 const { withScriptjs, withGoogleMap, GoogleMap } = require('react-google-maps');
 
@@ -61,7 +62,11 @@ const MapWithDirectionsRenderer = compose(
     googleMapURL: googleUrl,
     loadingElement: (
       <div className={'h-full flex items-center justify-center'}>
-        Loading...
+        <Loader2
+          className="text-teal-400 animate-spin"
+          strokeWidth={3}
+          size={30}
+        />
       </div>
     ),
     containerElement: <div className={'h-full w-full'} />,
@@ -76,6 +81,17 @@ const MapWithDirectionsRenderer = compose(
       const DirectionsService = new google.maps.DirectionsService();
       const { origin, destination, waypoints } = this.props;
 
+      if (!waypoints) {
+        return;
+      }
+
+      const googleWaypoints = waypoints.map((waypoint: any) => {
+        return {
+          location: new google.maps.LatLng(waypoint),
+          stopover: true,
+        };
+      });
+
       if (!origin || !destination) {
         console.log('ComponentDidMount: Origin or destination is null.');
         return;
@@ -85,7 +101,7 @@ const MapWithDirectionsRenderer = compose(
         {
           origin: new google.maps.LatLng(origin),
           destination: new google.maps.LatLng(destination),
-          waypoints: waypoints,
+          waypoints: googleWaypoints,
           travelMode: google.maps.TravelMode.DRIVING,
         },
         (result, status) => {
