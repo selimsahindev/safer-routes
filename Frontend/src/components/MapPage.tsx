@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { DirectionsRenderer } from 'react-google-maps';
+import { DirectionsRenderer, Marker } from 'react-google-maps';
 import SearchBar from '@/components/SearchBar';
 import { useMapRoute } from '@/context/MapRouteContext';
 const { compose, withProps, lifecycle } = require('recompose');
@@ -21,7 +21,7 @@ const MapPage: React.FC = () => {
           const { latitude, longitude } = position.coords;
           setUserLocation({ lat: latitude, lng: longitude });
 
-          // Optional: Pan the map to the current location
+          // Pan the map to the current location.
           if (mapRef) {
             mapRef.panTo({ lat: latitude, lng: longitude });
           }
@@ -37,7 +37,7 @@ const MapPage: React.FC = () => {
 
   const handleOnLocateClick = (e: any) => {
     e.preventDefault();
-    console.log(getCurrentLocation());
+    getCurrentLocation();
   };
 
   return (
@@ -73,13 +73,6 @@ const MapWithDirectionsRenderer = compose(
     componentDidMount() {
       const DirectionsService = new google.maps.DirectionsService();
       const { origin, destination, waypoints } = this.props;
-
-      this.props.onMapMounted(this.refs.map);
-
-      // const waypoints = routeCoordinates.slice(0, 10).map((coordinate) => ({
-      //   location: { lat: coordinate.lat, lng: coordinate.lng },
-      //   stopover: false,
-      // }));
 
       if (!origin || !destination) {
         console.log('ComponentDidMount: Origin or destination is null.');
@@ -130,10 +123,22 @@ const MapWithDirectionsRenderer = compose(
   })
 )((props: any) => (
   <GoogleMap
+    ref={(map: any) => props.onMapMounted(map)}
     defaultZoom={12}
     defaultCenter={new google.maps.LatLng(41.01003362760944, 28.97641250120364)}
   >
     {props.directions && <DirectionsRenderer directions={props.directions} />}
+
+    {/* Show marker for the current location if available */}
+    {props.userLocation && (
+      <Marker
+        position={props.userLocation}
+        icon={{
+          url: '/icons/current-location.png',
+          scaledSize: new google.maps.Size(30, 30),
+        }}
+      />
+    )}
   </GoogleMap>
 ));
 

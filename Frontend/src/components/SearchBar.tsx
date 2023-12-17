@@ -2,7 +2,7 @@ import { LocateFixed, ScanSearch } from 'lucide-react';
 import LocationSearchInput from './LocationSearchInput';
 import useFocusStore from '@/stores/focusStore';
 import RoutesService from '@/services/RouteService';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import LocationType from '@/types/LocationType';
 import { useMapRoute } from '@/context/MapRouteContext';
 
