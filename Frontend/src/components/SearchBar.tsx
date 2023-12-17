@@ -1,12 +1,43 @@
 import { LocateFixed, ScanSearch } from 'lucide-react';
 import LocationSearchInput from './LocationSearchInput';
 import useFocusStore from '@/stores/focusStore';
+import DirectionsService from '@/services/DirectionsService';
+import { useState } from 'react';
+import LocationType from '@/types/LocationType';
+import { on } from 'events';
 
-const SearchBar: React.FC = () => {
+interface SearchBarProps {
+  onLocateClick: (e: any) => void;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ onLocateClick }) => {
+  const [origin, setOrigin] = useState<LocationType | null>(null);
+  const [destionation, setDestination] = useState<LocationType | null>(null);
+
   const inputStyle =
     'border border-gray-30 text-sm w-full rounded-xl px-4 py-2 shadow-sm text-gray-500 focus:outline-teal-400';
 
   const isFocused = useFocusStore((state: any) => state.isFocused);
+
+  const handleFindRoutes = async (e: any) => {
+    e.preventDefault();
+
+    console.log('origin:', origin);
+    console.log('destination:', destionation);
+
+    if (!origin || !destionation) {
+      console.log('Origin or destination is null.');
+      return;
+    }
+
+    try {
+      const routes = await DirectionsService.getRoutes(origin, destionation);
+      // Do something with the routes, e.g., update state or perform further actions.
+      console.log('Routes:', routes);
+    } catch (error) {
+      console.error('Error fetching routes:', error);
+    }
+  };
 
   return (
     <div className="text-black w-full md:mx-auto">
@@ -16,11 +47,9 @@ const SearchBar: React.FC = () => {
             placeholder="Mevcut Konum"
             inputStyle={`${inputStyle} pr-10`}
             inputId="current-location"
+            setLocation={setOrigin}
           >
-            <button
-              className="focus:outline-teal-400"
-              onClick={(e) => e.preventDefault()}
-            >
+            <button className="focus:outline-teal-400" onClick={onLocateClick}>
               <div
                 className={`bg-gray-50 w-10 h-full -ml-10 rounded-r-xl border ${
                   isFocused ? 'border-teal-400 border-2' : 'border-gray-30'
@@ -39,12 +68,13 @@ const SearchBar: React.FC = () => {
             placeholder="Hedef Konum"
             inputStyle={inputStyle}
             inputId="target-location"
+            setLocation={setDestination}
           />
 
           <button
             type="submit"
             className="bg-teal-500 text-white px-4 py-2 mt-1 rounded-full shadow-md"
-            onClick={(e) => e.preventDefault()}
+            onClick={(e) => handleFindRoutes(e)}
           >
             <div className="flex flex-row justify-center gap-2">
               <p className="font-normal">Rota Bul</p>

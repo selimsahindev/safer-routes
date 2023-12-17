@@ -10,11 +10,42 @@ const googleUrl = `https://www.google.com/maps/embed/v1/directions?key=${apiKey}
 
 const MapPage: React.FC = () => {
   const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
+  const [userLocation, setUserLocation] =
+    useState<google.maps.LatLngLiteral | null>(null);
+
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ lat: latitude, lng: longitude });
+
+          // Optional: Pan the map to the current location
+          if (mapRef) {
+            mapRef.panTo({ lat: latitude, lng: longitude });
+          }
+        },
+        (error) => {
+          console.error('Error getting current location:', error);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by your browser.');
+    }
+  };
+
+  const handleOnLocateClick = (e: any) => {
+    e.preventDefault();
+    getCurrentLocation();
+  };
 
   return (
     <div className="flex flex-col h-screen bg-white md:px-[15%]">
-      <MapWithDirectionsRenderer />
-      <SearchBar />
+      <MapWithDirectionsRenderer
+        userLocation={userLocation}
+        onMapMounted={setMapRef}
+      />
+      <SearchBar onLocateClick={handleOnLocateClick} />
     </div>
   );
 };
