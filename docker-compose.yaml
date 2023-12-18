@@ -1,0 +1,35 @@
+version: "3"
+name: "safer-routes"
+services:
+  fastapi-app:
+    container_name: fastapi
+    image: nikbenlioglu/safer-routes:latest
+    ports:
+      - "8000:8000"
+    networks:
+      - internal
+    environment:
+      - HOST=host.docker.internal
+  
+  backend:
+    container_name: backend
+    image: nikbenlioglu/backend:latest
+    ports:
+      - "4000:4000"
+    networks:
+      - internal
+    environment:
+      - HOST=host.docker.internal
+
+  frontend:
+    container_name: frontend
+    image: nikbenlioglu/frontend:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - internal
+    environment:
+      - HOST=host.docker.internal
+networks:
+  internal:
+    driver: bridge
