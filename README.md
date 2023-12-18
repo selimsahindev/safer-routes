@@ -4,6 +4,20 @@
 
 Selim Şahin & Nikolay Benlioğlu
 
+-------
+
+### Docker ile projeyi çalıştırma
+Kök dizindeki docker-compose.yaml dosyası ile tüm servisleri ve uygulamayı çalışır duruma getirip deneyebiliyoruz.
+
+`docker-compose up`
+
+<br>
+
+**Test Kullanıcısı:** <br>
+email:  developer@test.com <br>
+parola: password <br>
+
+-------
 
 # Ekran Görüntüleri
 <img src="/Screenshots/Web.png" alt="Web ekran görüntüsü" width="764">
